@@ -1,0 +1,4 @@
+**/.env
+apache-kafka/apache-kafka
+**/node_modules
+mongodb/.docker
