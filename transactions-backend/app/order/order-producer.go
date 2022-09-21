@@ -1,36 +1,60 @@
-package main
+package order
 
 import (
 	"encoding/json"
+	"fmt"
 	"math/rand"
 	"time"
 
 	confluentKafka "github.com/confluentinc/confluent-kafka-go/kafka"
-	order "github.com/felpssc/food-ordering-kafka-poc/transactions-backend/app/order"
-	kafka "github.com/felpssc/food-ordering-kafka-poc/transactions-backend/infra/kafka"
+	kafka "github.com/felpssc/food-ordering-kafka-poc/infra/kafka"
 )
 
 func Produce(msg *confluentKafka.Message) {
 	producer := kafka.NewKafkaProducer()
 
-	objectOrder := NewOrder()
+	var order Order
 
-	json.Unmarshal(msg.Value, &objectOrder)
+	err := json.Unmarshal(msg.Value, &order)
 
-	// choose an random status between "confirmed" and "cancelled"
-	status := []string{"confirmed", "cancelled"}
+	if err != nil {
+		fmt.Println("Error while unmarshalling order: ", err.Error())
+	}
 
-	objectOrder.status = status[RandomNumber(0, 1)]
+	transaction_id := generateTransactionId()
 
-	// sleep for 2.5 seconds
-	time.Sleep(2500 * time.Millisecond)
+	order.Transaction_id = transaction_id
 
-	parsedJson, _ := json.Marshal(objectOrder)
+	// random status 0 or 1
+	status := RandomNumber(0, 2)
 
-	// publish the order to the topic
-	order.Publish(string(parsedJson), "order_confirmed", producer)
+	statusEnum := []string{"confirmed", "cancelled"}
+
+	order.Status = statusEnum[status]
+
+	orderJson, err := json.Marshal(order)
+
+	if err != nil {
+		fmt.Println("Error while marshalling order: ", err.Error())
+	}
+
+	queueEnum := []string{"order_confirmed", "order_cancelled"}
+
+	// sleep for 1.5 seconds
+	time.Sleep(1500 * time.Millisecond)
+
+	kafka.Publish(string(orderJson), queueEnum[status], producer)
+
+	fmt.Println(
+		"Order: ", string(order.Document_id),
+		" sent to queue: ", queueEnum[status],
+		" with transaction_id: ", transaction_id)
 }
 
 func RandomNumber(min, max int) int {
 	return rand.Intn(max-min) + min
+}
+
+func generateTransactionId() string {
+	return fmt.Sprintf("%d", time.Now().UnixNano())
 }

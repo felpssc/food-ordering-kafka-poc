@@ -21,7 +21,6 @@ func (k *KafkaConsumer) Consume() {
 	configMap := &confluentKafka.ConfigMap{
 		"bootstrap.servers": os.Getenv("KafkaBootstrapServers"),
 		"group.id":          os.Getenv("KafkaConsumerGroupId"),
-		"auto.offset.reset": "earliest",
 	}
 
 	c, err := confluentKafka.NewConsumer(configMap)
@@ -41,7 +40,6 @@ func (k *KafkaConsumer) Consume() {
 			msg, err := c.ReadMessage(-1)
 
 			if err == nil {
-				fmt.Println(string(msg.Value))
 				k.MsgChan <- msg
 			}
 		}

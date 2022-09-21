@@ -1,22 +1,23 @@
-package main
+package order
 
 type Product struct {
-	_id         string
-	name        string
-	description string
-	price       float64
-	_v          int
+	ID          string  `json:"_id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
+	V           int     `json:"__v"`
 }
 
 type Order struct {
-	document_id  string
-	client_name  string
-	client_email string
-	total_price  float64
-	status       string
-	products     []Product
-	created_at   string
-	_v           int
+	Document_id    string  `json:"document_id"`
+	Client_name    string  `json:"client_name"`
+	Client_email   string  `json:"client_email"`
+	Total_price    float64 `json:"total_price"`
+	Status         string  `json:"status"`
+	Products       string  `json:"products"`
+	Created_at     string  `json:"created_at"`
+	V              int     `json:"__v"`
+	Transaction_id string  `json:"transaction_id"`
 }
 
 func NewOrder() *Order {

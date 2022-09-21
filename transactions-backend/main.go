@@ -5,7 +5,8 @@ import (
 	"log"
 
 	confluentKafka "github.com/confluentinc/confluent-kafka-go/kafka"
-	kafka "github.com/felpssc/food-ordering-kafka-poc/transactions-backend/infra/kafka"
+	"github.com/felpssc/food-ordering-kafka-poc/app/order"
+	kafka "github.com/felpssc/food-ordering-kafka-poc/infra/kafka"
 	"github.com/joho/godotenv"
 )
 
@@ -23,10 +24,9 @@ func main() {
 	msgChan := make(chan *confluentKafka.Message)
 	consumer := kafka.NewKafkaConsumer(msgChan)
 
-	consumer.Consume()
+	go consumer.Consume()
 
 	for msg := range msgChan {
-		// go Produce(msg)
-		fmt.Println(string(msg.Value))
+		go order.Produce(msg)
 	}
 }
