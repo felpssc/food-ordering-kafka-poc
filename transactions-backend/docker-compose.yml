@@ -8,6 +8,7 @@ services:
       - .:/go/src/
     networks:
       - kafka_network
+      - api_network
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
 
@@ -15,3 +16,6 @@ networks:
   kafka_network:
     external:
       name: apache-kafka_default
+  api_network:
+    external:
+      name: mongodb_mongo_network
