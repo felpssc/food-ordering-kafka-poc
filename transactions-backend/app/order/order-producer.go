@@ -49,6 +49,8 @@ func Produce(msg *confluentKafka.Message) {
 		"Order: ", string(order.Document_id),
 		" sent to queue: ", queueEnum[status],
 		" with transaction_id: ", transaction_id)
+
+	UpdateOrderStatus(statusEnum[status], string(order.Document_id))
 }
 
 func RandomNumber(min, max int) int {
