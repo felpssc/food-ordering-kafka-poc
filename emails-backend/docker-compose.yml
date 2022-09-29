@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  emails_backed:
+    build: .
+    container_name: emails_backend
+    networks:
+      - kafka_network
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
+
+networks:
+  kafka_network:
+    external:
+      name: apache-kafka_default
