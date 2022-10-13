@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    volumes:
+      - .:/app
+    networks:
+      - kafka_network
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
+
+networks:
+  kafka_network:
+    external:
+      name: apache-kafka_default
